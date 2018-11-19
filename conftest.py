@@ -1,3 +1,4 @@
+import jsonpickle as jsonpickle
 import pytest
 from fixture.application import Application
 import json
