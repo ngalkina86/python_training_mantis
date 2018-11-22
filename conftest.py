@@ -17,12 +17,16 @@ def load_config(file):
            target=json.load (f)
     return target
 
+@pytest.fixture(scope = "session")
+def config(request):
+    return load_config(request.config.getoption("--target"))
+
 @pytest.fixture
 def app(request, config):
     global fixture
     browser = request.config.getoption("--browser")
     if fixture is None or not fixture.is_valid():
-        fixture = Application(browser=browser,base_url=config["web"]["baseUrl"])
+        fixture = Application(browser=browser,config=config)
     return fixture
 
 @pytest.fixture(scope = "session", autouse = True)
@@ -32,9 +36,7 @@ def configure_server(request,config):
         restor_serever_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
     request.addfinalizer(fin)
 
-@pytest.fixture(scope = "session")
-def config(request):
-    return load_config(request.config.getoption("--target"))
+
 
 def install_serever_configuration(host,username,password):
     with ftputil.FTPHost(host,username,password) as remote:
