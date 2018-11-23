@@ -17,9 +17,12 @@ def load_config(file):
            target=json.load (f)
     return target
 
-@pytest.fixture(scope = "session")
-def config(request):
-    return load_config(request.config.getoption("--target"))
+@pytest.fixture(scope = "session", autouse = True)
+def configure_server(request,config):
+    install_serever_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
+    def fin():
+        restor_serever_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
+    request.addfinalizer(fin)
 
 @pytest.fixture
 def app(request, config):
@@ -28,13 +31,6 @@ def app(request, config):
     if fixture is None or not fixture.is_valid():
         fixture = Application(browser=browser,config=config)
     return fixture
-
-@pytest.fixture(scope = "session", autouse = True)
-def configure_server(request,config):
-    install_serever_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
-    def fin():
-        restor_serever_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
-    request.addfinalizer(fin)
 
 
 
