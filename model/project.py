@@ -1,5 +1,8 @@
 from sys import maxsize
 
+import pymysql as pymysql
+
+
 class Project:
 
    def __init__(self,id=None,name=None, status=None, inherit_global=None,view_state=None,description=None):

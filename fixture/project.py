@@ -6,6 +6,23 @@ class ProjectHelper:
     def __init__(self, app):
         self.app = app
 
+    project_cache = None
+
+    def get_project_list(self):
+        if self.project_cache is None:
+            wd = self.app.wd
+            self.open_manage_page()
+            self.project_cache = []
+            tables = wd.find_elements_by_tag_name("table")
+            oldprojects = tables[2].find_elements_by_tag_name("a")
+            for element in wd.find_elements_by_tag_name("table"):
+                text = element.text
+                id = tables[2].find_elements_by_tag_name("a")
+                self.project_cache.append(Project(name = text, id = id))
+        return list(self.project_cache)
+
+
+
     def create(self,project):
         wd = self.app.wd
         wd.find_element_by_link_text("Manage").click()

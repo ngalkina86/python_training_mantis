@@ -1,10 +1,11 @@
-import json
 from model.project import Project
 import random
 import string
 import os.path
+import jsonpickle
 import getopt
 import sys
+
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "n:f:", ["number of projects", "file"])
@@ -29,11 +30,12 @@ def random_string(prefix,maxlen):
 
 testdata =[
     Project(name=random_string("name",10), description=random_string("description",10),status = random_string("status",10),
-       inherit_global = random_string("inherit_global",10),view_state = random_string("view_state",10))
+              inherit_global = random_string("inherit_global",10),view_state = random_string("view_state",10))
     for i in range(n)
 ]
 
 file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", f)
 
-with open(file,"w") as f:
-    f.write(json.dumps(testdata,default = lambda x: x.__dict__,indent = 2))
+with open(file,"w") as out:
+    jsonpickle.set_encoder_options("json", indent=2)
+    out.write(jsonpickle.encode(testdata))

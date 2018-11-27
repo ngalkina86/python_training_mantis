@@ -1,13 +1,19 @@
 from model.project import Project
 from selenium.webdriver.support.ui import Select
+import time
 
-def test_add_project(app,json_projects):
-    project = json_projects
+def test_add_project(app):
+  #  project = json_projects
     app.session.login("administrator", "root")
-    oldCount = app.project.count()
-    app.project.create(Project(name ="w1"))
-    newCount = app.project.count()
-    assert oldCount + 1 == newCount
+    old_projects = app.soap.list_projects("administrator", "root")
+    project =Project(name ="d")
+    app.project.create(project)
+    new_projects = app.soap.list_projects("administrator", "root")
+    old_projects.append(project)
+    time.sleep(3)
+    assert len(old_projects) + 1 == len(new_projects)
+    assert old_projects == new_projects
+   
 
 
 
